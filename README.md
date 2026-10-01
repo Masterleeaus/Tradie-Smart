@@ -1,4 +1,27 @@
-# Readme for worksuite
+# Worksuite SaaS (Laravel)
+
+![Portfolio banner](https://placehold.co/1200x320/182433/eff4f8?text=Worksuite+SaaS+%7C+Laravel)
+
+> **Portfolio status: archive or deletion review.** This repository is an imported third-party application and is not a suitable flagship portfolio project. It is retained temporarily for provenance and review; see [portfolio audit](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/main/docs/portfolio/REPOSITORY-PORTFOLIO-AUDIT.md). Do not treat it as original work.
+
+## Project summary
+
+A Laravel-based project management application with a broad feature set. The repository includes installation documentation and an existing test suite. This README summarizes the repository as it stands; functionality and security have not been independently reverified.
+
+## Setup
+
+See the [installation guide](docs/install.md) and use the tracked `.env.example` as a starting point. Never commit real credentials or local environment files.
+
+## Provenance
+
+This repository contains upstream Worksuite SaaS source and retains its original vendor attribution and licensing files. Review those terms before distributing or presenting modified versions.
+
+## Review notes
+
+- Imported source; distinguish any original contributions from upstream code.
+- Run the documented installation and tests in a clean environment before making capability claims.
+- Check licensing and vendor terms before redistribution.
+
 
 ## Installation
 
