@@ -1,7 +1,5 @@
 # Worksuite SaaS (Laravel)
 
-![Portfolio banner](https://placehold.co/1200x320/182433/eff4f8?text=Worksuite+SaaS+%7C+Laravel)
-
 > **Portfolio status: archive or deletion review.** This repository is an imported third-party application and is not a suitable flagship portfolio project. It is retained temporarily for provenance and review; see [portfolio audit](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/main/docs/portfolio/REPOSITORY-PORTFOLIO-AUDIT.md). Do not treat it as original work.
 
 ## Project summary
