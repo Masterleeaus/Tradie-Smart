@@ -2,6 +2,13 @@
 
 # Worksuite SaaS Vendor Source Archive
 
+## Product architecture and engineering highlights
+
+A substantial Laravel project-management application with an extensible vendor module/plugin structure and a documented installation path.
+
+- **Architecture:** The codebase is organized around the upstream Worksuite application and its Laravel ecosystem; its own README links the installation guide and included test suite.
+- **Distinctive engineering:** The portfolio value is a real-world SaaS codebase for studying application structure and extension boundaries. Preserve vendor attribution and distinguish upstream work from any local changes.
+
 > **Portfolio status: archive or deletion review.** This repository is an imported third-party application and is not a suitable flagship portfolio project. It is retained temporarily for provenance and review; see [portfolio audit](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/main/docs/portfolio/REPOSITORY-PORTFOLIO-AUDIT.md). Do not treat it as original work.
 
 ## Project summary
