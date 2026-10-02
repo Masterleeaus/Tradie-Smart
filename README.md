@@ -1,3 +1,5 @@
+![Worksuite SaaS Vendor Source Archive — THIRD-PARTY SOURCE · ATTRIBUTION RETAINED](docs/images/portfolio-banner.svg)
+
 # Worksuite SaaS (Laravel)
 
 > **Portfolio status: archive or deletion review.** This repository is an imported third-party application and is not a suitable flagship portfolio project. It is retained temporarily for provenance and review; see [portfolio audit](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/main/docs/portfolio/REPOSITORY-PORTFOLIO-AUDIT.md). Do not treat it as original work.
