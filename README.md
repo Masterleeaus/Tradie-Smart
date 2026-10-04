@@ -37,26 +37,6 @@ Tradie Smart currently includes:
 > **Core principle:** probabilistic intelligence should sit behind explicit business, tenant, tool, and execution boundaries rather than becoming the source of truth for operational state.
 
 
-## Why this exists
-
-Field-service software is a difficult environment for AI because the same system must coordinate customers, jobs, workers, schedules, payments, field evidence, compliance, and degraded connectivity.
-
-Tradie Smart explores a narrower engineering question than “can an LLM run a business?”:
-
-> **How can probabilistic AI participate in operational workflows without becoming the authority for operational truth?**
-
-The repository approaches that problem with four complementary boundaries:
-
-1. **Registered tools** instead of unrestricted model access to application internals.
-2. **Pending proposals** instead of treating model output as completed action.
-3. **Deterministic dispatch and skill rules** where ordinary software can make the decision reliably.
-4. **Offline field queues with transactional replay** so core work continues when connectivity degrades.
-
-The portfolio value is in those integration boundaries and failure modes, not in claiming original authorship over the inherited Worksuite codebase.
-
----
-
-
 ## Measured evidence
 
 Tradie Smart currently has **partial, mixed verification rather than a clean production-readiness result**. That is important portfolio evidence in its own right.
@@ -311,6 +291,26 @@ A separate [SkillMatchService.php](Modules/FSMSkill/Services/SkillMatchService.p
 - required skill levels
 
 This deterministic baseline matters because it gives future ML or AI dispatch recommendations something concrete to beat, test, explain, and fall back to.
+
+---
+
+## Why this exists
+
+Field-service software is a difficult environment for AI because the same system must coordinate customers, jobs, workers, schedules, payments, field evidence, compliance, and degraded connectivity.
+
+Tradie Smart explores a narrower engineering question than “can an LLM run a business?”:
+
+> **How can probabilistic AI participate in operational workflows without becoming the authority for operational truth?**
+
+The repository approaches that problem with four complementary boundaries:
+
+1. **Registered tools** instead of unrestricted model access to application internals.
+2. **Pending proposals** instead of treating model output as completed action.
+3. **Deterministic dispatch and skill rules** where ordinary software can make the decision reliably.
+4. **Offline field queues with transactional replay** so core work continues when connectivity degrades.
+
+The portfolio value is in those integration boundaries and failure modes, not in claiming original authorship over the inherited Worksuite codebase.
+
 
 ---
 
