@@ -60,7 +60,7 @@ jobs:
           key: composer-${{ matrix.php }}-${{ hashFiles('composer.lock') }}
           restore-keys: composer-${{ matrix.php }}-
 
-      - name: Ensure bootstrap/cache is writable before Composer post-install hooks
+      - name: Prepare bootstrap/cache for later Artisan commands
         run: mkdir -p bootstrap/cache && chmod -R 775 storage bootstrap/cache
 
       - name: Install Composer dependencies
@@ -68,9 +68,9 @@ jobs:
           # composer install exits 4 when the lock file is out of sync with composer.json
           # (e.g. when packages were added to composer.json without running composer update).
           # In that case, update only the out-of-sync packages to fix the lock file first.
-          if ! composer install --no-interaction --prefer-dist --optimize-autoloader; then
+          if ! composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts; then
             composer update laravel/mcp laravel/reverb --no-interaction --prefer-dist --no-scripts
-            composer install --no-interaction --prefer-dist --optimize-autoloader
+            composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts
           fi
 
       - name: Reinstall PHPUnit and Collision to ensure complete vendor files
@@ -120,6 +120,9 @@ jobs:
       - name: Generate app key
         run: php artisan key:generate
 
+      - name: Package discovery
+        run: php artisan package:discover --ansi
+
       - name: Clear caches
         run: |
           php artisan config:clear
@@ -135,9 +138,22 @@ jobs:
       - name: Route/bootstrap smoke checks
         run: |
           set -o pipefail
-          php artisan route:list > /tmp/route-list.txt
+          if ! php artisan route:list > /tmp/route-list.txt 2>&1; then
+            echo "route:list failed; captured Artisan output:"
+            tail -80 /tmp/route-list.txt
+            if [ -f storage/logs/laravel.log ]; then
+              echo "Laravel exception log:"
+              grep -E 'ERROR:|CRITICAL:|ALERT:|EMERGENCY:' storage/logs/laravel.log | tail -40 || true
+            fi
+            exit 1
+          fi
           tail -5 /tmp/route-list.txt
-          php artisan about
+          if ! php artisan about > /tmp/artisan-about.txt 2>&1; then
+            echo "artisan about failed; captured Artisan output:"
+            tail -80 /tmp/artisan-about.txt
+            exit 1
+          fi
+          cat /tmp/artisan-about.txt
 
       - name: Run tests
         run: php artisan test

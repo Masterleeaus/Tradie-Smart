@@ -468,7 +468,7 @@ return new class extends Migration {
                     ->on('users')
                     ->onDelete('cascade')
                     ->onUpdate('cascade');
-                $table->unsignedBigInteger('faq_id');
+                $table->uuid('faq_id');
                 $table->foreign('faq_id')
                     ->references('id')
                     ->on('faqs')

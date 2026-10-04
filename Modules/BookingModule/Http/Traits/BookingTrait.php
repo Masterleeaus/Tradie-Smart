@@ -13,7 +13,7 @@ use Modules\BookingModule\Entities\BookingRepeatDetails;
 use Modules\BookingModule\Entities\SubscriptionBookingType;
 use Modules\BusinessSettingsModule\Entities\PackageSubscriber;
 use Modules\CartModule\Entities\Cart;
-use Modules\PaymentModule\Entities\OfflinePayment;
+use App\Models\OfflinePaymentMethod as OfflinePayment;
 use Modules\PromotionManagement\Entities\Coupon;
 use Modules\PromotionManagement\Entities\PushNotification;
 use Modules\PromotionManagement\Entities\PushNotificationUser;

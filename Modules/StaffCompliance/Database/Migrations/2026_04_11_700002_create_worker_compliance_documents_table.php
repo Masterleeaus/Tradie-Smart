@@ -14,7 +14,7 @@ class CreateWorkerComplianceDocumentsTable extends Migration
 
         Schema::create('worker_compliance_documents', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('user_id')->index();
+            $table->unsignedInteger('user_id')->index();
             $table->unsignedInteger('document_type_id')->index();
             $table->string('document_number')->nullable();
             $table->string('issuing_authority')->nullable();
@@ -23,7 +23,7 @@ class CreateWorkerComplianceDocumentsTable extends Migration
             $table->string('file_path')->nullable();
             $table->enum('status', ['pending_review', 'verified', 'expired', 'rejected'])
                   ->default('pending_review');
-            $table->unsignedBigInteger('verified_by')->nullable();
+            $table->unsignedInteger('verified_by')->nullable();
             $table->dateTime('verified_at')->nullable();
             $table->text('rejection_reason')->nullable();
             $table->text('notes')->nullable();

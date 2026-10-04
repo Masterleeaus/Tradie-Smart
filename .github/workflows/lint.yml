@@ -68,14 +68,14 @@ jobs:
           key: composer-lint-${{ hashFiles('composer.lock') }}
           restore-keys: composer-lint-
 
-      - name: Ensure bootstrap/cache is writable before Composer post-install hooks
+      - name: Prepare bootstrap/cache for later Artisan commands
         run: mkdir -p bootstrap/cache && chmod -R 775 storage bootstrap/cache
 
       - name: Install Composer dependencies
         run: |
-          if ! composer install --no-interaction --prefer-dist --optimize-autoloader; then
+          if ! composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts; then
             composer update laravel/mcp laravel/reverb --no-interaction --prefer-dist --no-scripts
-            composer install --no-interaction --prefer-dist --optimize-autoloader
+            composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts
           fi
 
       - name: Run Laravel Pint (check only — no auto-fix)
@@ -112,14 +112,14 @@ jobs:
           key: composer-phpstan-${{ hashFiles('composer.lock') }}
           restore-keys: composer-phpstan-
 
-      - name: Ensure bootstrap/cache is writable before Composer post-install hooks
+      - name: Prepare bootstrap/cache for later Artisan commands
         run: mkdir -p bootstrap/cache && chmod -R 775 storage bootstrap/cache
 
       - name: Install Composer dependencies
         run: |
-          if ! composer install --no-interaction --prefer-dist --optimize-autoloader; then
+          if ! composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts; then
             composer update laravel/mcp laravel/reverb --no-interaction --prefer-dist --no-scripts
-            composer install --no-interaction --prefer-dist --optimize-autoloader
+            composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts
           fi
 
       - name: Prepare .env for PHPStan
@@ -130,6 +130,7 @@ jobs:
           echo "DB_DATABASE=/tmp/phpstan.sqlite" >> .env
           touch /tmp/phpstan.sqlite
           php artisan key:generate --quiet
+          php artisan package:discover --ansi
 
       - name: Run PHPStan
         run: php vendor/bin/phpstan analyse --configuration=phpstan.neon.dist --memory-limit=-1 --no-progress

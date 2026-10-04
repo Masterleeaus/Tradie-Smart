@@ -34,7 +34,9 @@ return new class extends Migration
             $table->string('mobile')->nullable();
             $table->string('no_hp');
             $table->unsignedInteger('house_id')->nullable();
-            $table->foreign('house_id')->references('id')->on('houses')->onDelete('cascade')->onUpdate('cascade');
+            if (Schema::hasTable('houses')) {
+                $table->foreign('house_id')->references('id')->on('houses')->onDelete('cascade')->onUpdate('cascade');
+            }
             $table->unsignedInteger('country_id')->nullable();
             $table->foreign('country_id')->references('id')->on('countries')->onDelete('cascade')->onUpdate('cascade');
             $table->unsignedInteger('added_by')->nullable();

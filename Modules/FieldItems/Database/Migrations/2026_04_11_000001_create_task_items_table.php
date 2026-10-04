@@ -19,7 +19,7 @@ return new class extends Migration
 
         Schema::create('task_items', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('task_id');
+            $table->unsignedInteger('task_id');
             $table->unsignedBigInteger('item_id');
             $table->decimal('quantity', 10, 2)->default(1);
             $table->decimal('unit_price', 10, 2)->nullable();

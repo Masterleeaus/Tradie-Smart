@@ -47,14 +47,14 @@ jobs:
           extensions: mbstring, pdo, pdo_mysql, dom, curl, zip, bcmath, intl, gd, exif, fileinfo
           coverage: none
 
-      - name: Ensure bootstrap/cache is writable before Composer post-install hooks
+      - name: Prepare bootstrap/cache for later Artisan commands
         run: mkdir -p bootstrap/cache && chmod -R 775 storage bootstrap/cache
 
       - name: Install Composer dependencies (fresh — no cache)
         run: |
-          if ! composer install --no-interaction --prefer-dist --optimize-autoloader; then
+          if ! composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts; then
             composer update laravel/mcp laravel/reverb --no-interaction --prefer-dist --no-scripts
-            composer install --no-interaction --prefer-dist --optimize-autoloader
+            composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts
           fi
 
       - name: Setup Node
