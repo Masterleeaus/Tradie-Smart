@@ -24,6 +24,11 @@ on:
         description: 'Label to filter issues (default: copilot)'
         required: false
         default: 'copilot'
+      retrigger:
+        description: 'Re-trigger an issue even if a Copilot trigger comment already exists'
+        required: false
+        type: boolean
+        default: false
 
 # Only one run of this workflow at a time to avoid double-assignment races.
 concurrency:
@@ -60,6 +65,9 @@ jobs:
             const TRIGGER_BODY =
               `@github-copilot Please work on this issue. ` +
               `When you are done, close the issue or open a pull request that references it.`;
+            const FORCE_RETRIGGER =
+              context.eventName === 'workflow_dispatch' &&
+              String(context.payload.inputs?.retrigger ?? '').toLowerCase() === 'true';
 
             // ----------------------------------------------------------------
             // 1. Fetch all open issues that carry the target label.
@@ -77,6 +85,22 @@ jobs:
               });
               // issues endpoint returns PRs too — exclude them
               return data.filter(i => !i.pull_request);
+            }
+
+            async function hasExistingTriggerComment(issueNumber) {
+              const comments = await github.paginate(
+                github.rest.issues.listComments,
+                {
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: issueNumber,
+                  per_page: 100,
+                }
+              );
+              return comments.some(
+                comment => comment.user?.login === 'github-actions[bot]' &&
+                           (comment.body || '').trim() === TRIGGER_BODY
+              );
             }
 
             let issues = await fetchOpenIssues(LABEL);
@@ -104,14 +128,26 @@ jobs:
             // 2. Pick the oldest open issue that the agent is NOT already
             //    assigned to (prevents re-assigning an in-progress issue).
             // ----------------------------------------------------------------
-            const next = issues.find(
-              i => !i.assignees.some(a => a.login === AGENT_LOGIN)
-            );
+            let next = null;
+            for (const issue of issues) {
+              if (issue.assignees.some(a => a.login === AGENT_LOGIN)) continue;
+
+              if (!FORCE_RETRIGGER && await hasExistingTriggerComment(issue.number)) {
+                core.info(
+                  `Skipping issue #${issue.number}: a Copilot trigger comment already exists.`
+                );
+                continue;
+              }
+
+              next = issue;
+              break;
+            }
 
             if (!next) {
               core.info(
-                `All ${issues.length} open issue(s) in the queue are already ` +
-                `assigned to @${AGENT_LOGIN}. Nothing to do.`
+                `No eligible issue remains among ${issues.length} open issue(s): ` +
+                `each is already assigned or has a prior Copilot trigger comment. ` +
+                (FORCE_RETRIGGER ? '' : 'Use workflow_dispatch with retrigger=true to retry intentionally.')
               );
               return;
             }
