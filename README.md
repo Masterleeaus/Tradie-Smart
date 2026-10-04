@@ -11,7 +11,7 @@
 [![CI](https://github.com/Masterleeaus/Tradie-Smart/actions/workflows/ci.yml/badge.svg)](https://github.com/Masterleeaus/Tradie-Smart/actions/workflows/ci.yml)
 [![Install Check](https://github.com/Masterleeaus/Tradie-Smart/actions/workflows/install-check.yml/badge.svg)](https://github.com/Masterleeaus/Tradie-Smart/actions/workflows/install-check.yml)
 
-[Technical signature](#technical-signature) · [Architecture](#architecture) · [Field runtime](#offline-first-field-runtime) · [Verification](#verification) · [Quick start](#quick-start) · [Provenance](#provenance)
+[Measured evidence](#measured-evidence) · [What is new](#what-is-new) · [Architecture](#architecture) · [Field runtime](#3-offline-first-field-runtime) · [Verification](#reproducible-verification) · [Quick start](#quick-start)
 
 </div>
 
