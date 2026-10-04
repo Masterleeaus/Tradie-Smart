@@ -1,8 +1,12 @@
-![Worksuite SaaS Vendor Source Archive — THIRD-PARTY SOURCE · ATTRIBUTION RETAINED](docs/images/portfolio-banner.svg)
+![Tradie Smart — attributed Worksuite Laravel source archive with vendor modules and project-management domains](docs/images/tradie-smart-banner.svg)
 
 # Worksuite SaaS Vendor Source Archive
 
 ## Product architecture and engineering highlights
+
+<p align="center">
+  <img src="docs/images/tradie-smart-architecture.svg" alt="Tradie Smart source map from the Laravel host through vendor modules and project-management workflows to installation and test evidence." width="100%" />
+</p>
 
 A substantial Laravel project-management application with an extensible vendor module/plugin structure and a documented installation path.
 
