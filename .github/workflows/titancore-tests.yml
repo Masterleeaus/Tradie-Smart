@@ -46,14 +46,14 @@ jobs:
           extensions: mbstring, pdo, pdo_mysql, curl, json, gd, zip
           coverage: none
 
-      - name: Ensure bootstrap/cache is writable before Composer post-install hooks
+      - name: Prepare bootstrap/cache for later Artisan commands
         run: mkdir -p bootstrap/cache && chmod -R 775 storage bootstrap/cache
 
       - name: Install dependencies
         run: |
-          if ! composer install --no-interaction --no-progress --prefer-dist; then
+          if ! composer install --no-interaction --no-progress --prefer-dist --no-scripts; then
             composer update laravel/mcp laravel/reverb --no-interaction --prefer-dist --no-scripts
-            composer install --no-interaction --no-progress --prefer-dist
+            composer install --no-interaction --no-progress --prefer-dist --no-scripts
           fi
 
       - name: Prepare .env
@@ -71,6 +71,7 @@ jobs:
           echo "QUEUE_CONNECTION=sync" >> .env
           echo "MAIL_MAILER=array" >> .env
           php artisan key:generate --quiet
+          php artisan package:discover --ansi
 
       - name: Run TitanCore tests
         run: php artisan test Modules/TitanCore/Tests
