@@ -8,7 +8,7 @@
 
 </div>
 
-Tradie-Smart brings the day-to-day operating surface of a service business into one Laravel application: customer and lead records, projects and tasks, estimates and invoices, employee operations, attendance, contracts, support, reporting, and a broad field-service module family. Its strongest engineering story is the extension boundary—domain modules own their routes, providers, migrations, views, and tests while the host application supplies shared authentication, tenancy, and platform services.
+Tradie-Smart brings the day-to-day operating surface of a service business into one Laravel application: customer and lead records, projects and tasks, estimates and invoices, employee operations, attendance, contracts, support, reporting, and a broad field-service module family. Its strongest engineering story is the extension boundary—domain modules can own their routes, providers, migrations, views, and tests while the host application supplies shared authentication, tenancy, and platform services.
 
 ## What it solves
 
@@ -56,12 +56,14 @@ The application is intentionally broad: shared account routes handle common busi
 
 ```bash
 composer install --no-interaction --prefer-dist
-copy .env.example .env
+cp .env.example .env
 php artisan key:generate
 php artisan migrate
 npm ci
 npm run development
 ```
+
+The FSM family is heterogeneous: some packages are full feature areas, while others are thin schemas, providers, or wiring layers. Treat each module as an extension boundary rather than assuming every package is an independently complete application.
 
 For a production asset build, use `npm run production`. The repository also contains the more detailed [`docs/install.md`](docs/install.md) guide.
 
