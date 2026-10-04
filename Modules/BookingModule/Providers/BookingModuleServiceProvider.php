@@ -54,6 +54,18 @@ class BookingModuleServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // ProviderManagement is no longer part of the canonical runtime, but
+        // legacy Booking/Service controllers still type-hint its core models.
+        // Register narrow compatibility aliases before routes are loaded so
+        // route discovery and clean installs fail closed on real runtime
+        // problems instead of a removed module namespace.
+        if (!class_exists(\Modules\ProviderManagement\Entities\Provider::class)) {
+            class_alias(\Modules\BookingModule\Support\Compat\ProviderCompat::class, \Modules\ProviderManagement\Entities\Provider::class);
+        }
+        if (!class_exists(\Modules\ProviderManagement\Entities\SubscribedService::class)) {
+            class_alias(\Modules\BookingModule\Support\Compat\SubscribedServiceCompat::class, \Modules\ProviderManagement\Entities\SubscribedService::class);
+        }
+
         $this->app->register(RouteServiceProvider::class);
         if (class_exists(\Modules\BookingModule\Providers\AuthServiceProvider::class)) { $this->app->register(\Modules\BookingModule\Providers\AuthServiceProvider::class); }
         if (class_exists(\Modules\BookingModule\Providers\EventServiceProvider::class)) { $this->app->register(\Modules\BookingModule\Providers\EventServiceProvider::class); }
