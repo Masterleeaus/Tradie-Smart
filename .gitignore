@@ -10,7 +10,6 @@ storage/reviewed
 !.env.example
 !.env.*.template
 .env.*
-!.env.example
 
 # Laravel generated / local files
 /vendor/
@@ -18,6 +17,8 @@ storage/reviewed
 /public/hot
 /public/storage
 /storage/*.key
+.DS_Store
+.phpunit.result.cache
 Homestead.json
 Homestead.yaml
 npm-debug.log
