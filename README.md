@@ -11,7 +11,7 @@
 [![CI](https://github.com/Masterleeaus/Tradie-Smart/actions/workflows/ci.yml/badge.svg)](https://github.com/Masterleeaus/Tradie-Smart/actions/workflows/ci.yml)
 [![Install Check](https://github.com/Masterleeaus/Tradie-Smart/actions/workflows/install-check.yml/badge.svg)](https://github.com/Masterleeaus/Tradie-Smart/actions/workflows/install-check.yml)
 
-[Measured evidence](#measured-evidence) · [What is new](#what-is-new) · [Architecture](#architecture) · [Field runtime](#3-offline-first-field-runtime) · [Verification](#reproducible-verification) · [Quick start](#quick-start)
+[Measured evidence](#measured-evidence) · [What is new](#what-is-new) · [Architecture](#architecture) · [Field runtime](#3-offline-first-field-runtime) · [Verification](#reproducible-verification) · [Limitations](#known-limitations) · [Quick start](#quick-start)
 
 </div>
 
@@ -37,25 +37,45 @@ Tradie Smart currently includes:
 > **Core principle:** probabilistic intelligence should sit behind explicit business, tenant, tool, and execution boundaries rather than becoming the source of truth for operational state.
 
 
+## Why this exists
+
+Field-service software is a difficult environment for AI because the same system must coordinate customers, jobs, workers, schedules, payments, field evidence, compliance, and degraded connectivity.
+
+Tradie Smart explores a narrower engineering question than “can an LLM run a business?”:
+
+> **How can probabilistic AI participate in operational workflows without becoming the authority for operational truth?**
+
+The repository approaches that problem with four complementary boundaries:
+
+1. **Registered tools** instead of unrestricted model access to application internals.
+2. **Pending proposals** instead of treating model output as completed action.
+3. **Deterministic dispatch and skill rules** where ordinary software can make the decision reliably.
+4. **Offline field queues with transactional replay** so core work continues when connectivity degrades.
+
+The portfolio value is in those integration boundaries and failure modes, not in claiming original authorship over the inherited Worksuite codebase.
+
+---
+
+
 ## Measured evidence
 
 Tradie Smart currently has **partial, mixed verification rather than a clean production-readiness result**. That is important portfolio evidence in its own right.
 
-The last documented verification snapshot in this repository was recorded on **4 October 2026** at commit `46132b2592a3b34a144b5997327e8430b5571705`.
+The current GitHub Actions snapshot was checked on **5 October 2026** at commit `dd8a0910e3d62e3fab4b4407d5c9571043ec37dc`.
 
 | Verification area | Documented result | What it establishes |
 | --- | --- | --- |
-| Lint workflow | ✅ Passing in recorded snapshot | repository lint lane completed |
-| Security workflow | ✅ Passing in recorded snapshot | CodeQL/security workflow completed; some dependency-audit steps remain informational |
-| Composer install | ✅ Reached successfully | PHP dependency installation succeeded in CI |
-| Frontend production build | ✅ Reached successfully | production asset build completed |
-| MySQL migrations | ✅ Reached successfully | migrate and migrate:fresh completed |
-| SQLite migrations | ✅ Reached successfully | migrate and migrate:fresh completed |
-| Route/bootstrap smoke | ❌ Failing in recorded snapshot | unresolved `ProviderManagement\Entities\SubscribedService` reference |
-| PHPUnit stage | ⏸ Blocked in recorded snapshot | downstream tests did not run because bootstrap failed first |
-| Fresh install check | ❌ Failing in recorded snapshot | install reached route bootstrap before failing |
+| Lint workflow | ✅ Passing at current head | repository lint lane completed |
+| Security workflow | ✅ Passing at current head | CodeQL/security workflow completed; some dependency-audit steps remain informational |
+| Composer install | ✅ Passing before bootstrap failure | PHP dependency installation succeeds on PHP 8.3 |
+| Frontend production build | ✅ Passing before bootstrap failure | production asset build completes |
+| MySQL migrations | ✅ Passing before bootstrap failure | migrate and migrate:fresh complete |
+| SQLite migrations | ✅ Passing before bootstrap failure | migrate and migrate:fresh complete |
+| Route/bootstrap smoke | ❌ Failing at current head | unresolved `ProviderManagement\Entities\SubscribedService` reference |
+| PHPUnit stage | ⏸ Blocked at current head | downstream tests are skipped because bootstrap fails first |
+| Fresh install check | ❌ Failing at current head | fresh install reaches route bootstrap before failing |
 
-**Important:** the main branch has advanced since that recorded snapshot. Treat the table as dated evidence, not a claim about the current head. Rerun the repository workflows before presenting those statuses as current.
+The statuses above are tied to the stated commit. Future commits can change them; the workflow badges at the top of this README remain the quickest current signal.
 
 This repository therefore demonstrates something more useful than a blanket “production-ready” claim: substantial install/build/migration progress, a clearly identified bootstrap failure, and an explicit boundary on what has and has not been verified.
 
@@ -437,14 +457,40 @@ This should be hardened before describing the AI runtime as strongly governed.
 
 ---
 
+## Observability
+
+Important AI and operational behaviour is represented by persisted records rather than disappearing inside a single opaque agent loop.
+
+Current observability surfaces include:
+
+- AI conversations and messages
+- AI tool-call records
+- prompt and run records
+- proposal records with confidence, risk, explanation and evidence references
+- AI usage records
+- field-sync per-item results
+- operational logs and Laravel application logs
+
+Representative implementation paths include:
+
+- [AiToolsToolCall.php](Modules/Aitools/Entities/AiToolsToolCall.php)
+- [ChatOrchestrator.php](Modules/Aitools/Services/Chat/ChatOrchestrator.php)
+- [ProposalRunner.php](Modules/BookingModule/Services/Ai/ProposalRunner.php)
+- [TitanAIRunLogService.php](Modules/TitanCore/Services/TitanAIRunLogService.php)
+- [UsageCostLogger.php](Modules/TitanCore/Services/UsageCostLogger.php)
+
+The repository does not yet provide a single unified trace spanning model decision → tool call → proposal → approval → field mutation. That remains a useful observability target.
+
+---
+
 ## Reproducible verification
 
 ## Current main-branch snapshot
 
-Snapshot reviewed: **2026-10-04**  
-Commit: **46132b2592a3b34a144b5997327e8430b5571705**
+Snapshot reviewed: **2026-10-05**  
+Commit: **dd8a0910e3d62e3fab4b4407d5c9571043ec37dc**
 
-The current GitHub Actions evidence is mixed and is reported as-is.
+The latest GitHub Actions evidence at that head is mixed and is reported as-is.
 
 | Check | Current result | What was verified |
 | --- | --- | --- |
@@ -475,6 +521,28 @@ This is more useful evidence than claiming the repository is production-ready wh
 - [.github/workflows/lint.yml](.github/workflows/lint.yml)
 - [.github/workflows/security.yml](.github/workflows/security.yml)
 - [.github/workflows/titancore-tests.yml](.github/workflows/titancore-tests.yml)
+
+### Formal AI evaluation status
+
+Tradie Smart does **not yet publish a dedicated AI-system benchmark** for tool selection, proposal quality, tenant isolation, or dispatch-policy comparison.
+
+That is an important distinction:
+
+- CI currently verifies install/build/migration/bootstrap behaviour.
+- PHPUnit coverage exists across the host and selected modules.
+- The repository contains inspectable AI and automation mechanisms.
+- It does **not** yet provide a reproducible feature-enabled versus feature-disabled AI evaluation with a measured baseline.
+
+A professional next step is therefore an `eval/` suite covering:
+
+1. correct versus incorrect tool selection,
+2. disabled/unregistered tool rejection,
+3. proposal risk and confirmation behaviour,
+4. tenant isolation,
+5. dispatch baseline comparisons,
+6. offline replay duplicate-resistance and recovery.
+
+Until that exists, this README treats the AI evidence as **implementation evidence plus CI/test evidence**, not as a benchmark claim.
 
 ---
 
@@ -546,7 +614,7 @@ Detailed repository guidance:
 
 ### Current bootstrap warning
 
-At the current main commit, fresh CI reaches the route bootstrap check and fails on the missing ProviderManagement SubscribedService class described in [Verification](#verification).
+At the current main commit, fresh CI reaches the route bootstrap check and fails on the missing ProviderManagement SubscribedService class described in [Reproducible verification](#reproducible-verification).
 
 Treat the repository as **active engineering work**, not as a clean production release until that blocker is resolved and the downstream test stage runs.
 
@@ -696,6 +764,12 @@ There is a broad test estate, but current main does not reach the primary test s
 
 The repository contains inherited Worksuite/vendor source. Repository ownership must not be confused with original authorship of every file or inherited feature.
 
+## Repository governance files
+
+The repository currently does **not** contain root-level `LICENSE`, `SECURITY.md`, `CONTRIBUTING.md`, or `CHANGELOG.md` files.
+
+`composer.json` declares the package license as MIT, but a professional public portfolio repository should still include an explicit root license file and contribution/security guidance before being treated as fully packaged open-source software.
+
 ---
 
 # Engineering Priorities
@@ -707,6 +781,7 @@ The repository contains inherited Worksuite/vendor source. Repository ownership 
 5. **Add AI-specific evaluation suites** for tool selection, tenant isolation, proposal safety and failure handling.
 6. **Publish reproducible dispatch evaluation** comparing deterministic ranking against alternative policies.
 7. **Separate inherited Worksuite capability from repository-local contributions more explicitly in documentation.**
+8. **Add root governance files** — `LICENSE`, `SECURITY.md`, `CONTRIBUTING.md`, and `CHANGELOG.md`.
 
 ---
 
@@ -776,6 +851,31 @@ The GitHub repository currently has no top-level LICENSE file, so repository-wid
 
 ---
 
+# Security and Responsible Use
+
+Tradie Smart combines business data, field-worker data, payments, integrations and AI-assisted actions. That makes authority boundaries more important than model capability.
+
+Before production deployment, operators should validate at minimum:
+
+- tenant isolation
+- authentication and role permissions
+- secret management
+- provider credentials
+- webhook verification
+- payment-provider configuration
+- audit logging
+- data-retention requirements
+- AI tool allowlists
+- proposal approval rules
+- rate limits and token/cost controls
+- offline replay idempotency
+
+The current repository should **not** be interpreted as evidence that autonomous execution is safe for financial, legal, employment, safety-critical or compliance-sensitive decisions without human review and domain-specific controls.
+
+A root `SECURITY.md` is still missing and is listed as a repository-hardening priority.
+
+---
+
 # Project Status
 
 | Area | Status |
@@ -791,6 +891,14 @@ The GitHub repository currently has no top-level LICENSE file, so repository-wid
 | Fresh install | 🔴 Blocked at route bootstrap |
 | Main CI | 🔴 Blocked before PHPUnit |
 | Production certification | ⚪ Not claimed |
+
+---
+
+# License Status
+
+`composer.json` currently declares **MIT**, but the repository does not yet contain a root `LICENSE` file.
+
+For portfolio review, treat the licensing metadata as incomplete until the root license and any upstream/vendor attribution requirements are documented explicitly.
 
 ---
 
