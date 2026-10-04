@@ -1,10 +1,10 @@
 <?php
 
-namespace Modules\\BookingModule\\Http\\Traits;
+namespace Modules\BookingModule\Http\Traits;
 
-use MatanYadaev\\EloquentSpatial\\Objects\\Point;
-use Modules\\UserManagement\\Entities\\UserAddress;
-use Modules\\ZoneManagement\\Entities\\Zone;
+use MatanYadaev\EloquentSpatial\Objects\Point;
+use Modules\UserManagement\Entities\UserAddress;
+use Modules\ZoneManagement\Entities\Zone;
 
 trait CustomerAddressTrait
 {
