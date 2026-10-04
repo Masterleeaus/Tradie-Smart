@@ -60,7 +60,7 @@ jobs:
           key: composer-${{ matrix.php }}-${{ hashFiles('composer.lock') }}
           restore-keys: composer-${{ matrix.php }}-
 
-      - name: Ensure bootstrap/cache is writable before Composer post-install hooks
+      - name: Prepare bootstrap/cache for later Artisan commands
         run: mkdir -p bootstrap/cache && chmod -R 775 storage bootstrap/cache
 
       - name: Install Composer dependencies
@@ -68,9 +68,9 @@ jobs:
           # composer install exits 4 when the lock file is out of sync with composer.json
           # (e.g. when packages were added to composer.json without running composer update).
           # In that case, update only the out-of-sync packages to fix the lock file first.
-          if ! composer install --no-interaction --prefer-dist --optimize-autoloader; then
+          if ! composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts; then
             composer update laravel/mcp laravel/reverb --no-interaction --prefer-dist --no-scripts
-            composer install --no-interaction --prefer-dist --optimize-autoloader
+            composer install --no-interaction --prefer-dist --optimize-autoloader --no-scripts
           fi
 
       - name: Reinstall PHPUnit and Collision to ensure complete vendor files
@@ -119,6 +119,9 @@ jobs:
 
       - name: Generate app key
         run: php artisan key:generate
+
+      - name: Package discovery
+        run: php artisan package:discover --ansi
 
       - name: Clear caches
         run: |
