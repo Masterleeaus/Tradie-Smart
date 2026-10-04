@@ -36,15 +36,6 @@ return [
         'FSMAvailability'      => ['FSMCore'],
         'FSMStock'             => ['FSMCore'],
         'FSMCRM'               => ['FSMCore'],         // references fsm_locations, fsm_orders
-        // FSM extension modules
-        'FSMAccount'        => ['FSMCore'],
-        'FSMKanban'         => ['FSMCore'],
-        'FSMProject'        => ['FSMCore'],
-        'FSMRepair'         => ['FSMCore'],
-        'FSMRepairTemplate' => ['FSMCore', 'FSMRepair'],
-        'FSMSize'           => ['FSMCore'],
-        'FSMStageAction'    => ['FSMCore'],
-
         'FSMCalendar'          => ['FSMCore'],
 
         // Accounting stack

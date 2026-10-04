@@ -4,14 +4,10 @@ namespace Tests\Feature\FSM;
 
 use App\Models\Estimate;
 use App\Models\Invoice;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Modules\FSMCore\Models\FSMOrder;
-use Modules\FSMProject\Http\Controllers\EstimateToOrderController;
 use Modules\FSMSales\Services\InvoiceGenerationService;
 use Tests\Feature\Titan\Support\TitanFakeUser;
 use Tests\TestCase;
@@ -134,59 +130,10 @@ class FsmEstimateOrderConversionTest extends TestCase
             'updated_at' => now(),
         ]);
 
-        if (! Route::has('fsmcore.orders.show')) {
-            Route::get('/_fsm/orders/{id}', static fn () => 'ok')->name('fsmcore.orders.show');
-        }
-
         $this->withoutMiddleware();
         $this->actingAs(new TitanFakeUser(11, 1, ['admin']));
 
         Invoice::flushEventListeners();
-    }
-
-    public function test_convert_creates_fsm_order_from_accepted_estimate(): void
-    {
-        DB::table('estimates')->insert([
-            'id' => 101,
-            'company_id' => 1,
-            'client_id' => 11,
-            'estimate_number' => 'EST-101',
-            'status' => 'accepted',
-            'description' => 'Accepted estimate details',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $controller = app(EstimateToOrderController::class);
-        $response = $controller->convert(Request::create('/account/fsm/estimates/101/convert-to-order', 'POST'), 101);
-
-        $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertDatabaseHas('fsm_orders', [
-            'estimate_id' => 101,
-            'person_id' => 11,
-            'company_id' => 1,
-        ]);
-    }
-
-    public function test_convert_rejects_non_accepted_estimate(): void
-    {
-        DB::table('estimates')->insert([
-            'id' => 202,
-            'company_id' => 1,
-            'client_id' => 11,
-            'estimate_number' => 'EST-202',
-            'status' => 'draft',
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]);
-
-        $controller = app(EstimateToOrderController::class);
-        $response = $controller->convert(Request::create('/account/fsm/estimates/202/convert-to-order', 'POST'), 202);
-
-        $this->assertInstanceOf(RedirectResponse::class, $response);
-        $this->assertDatabaseMissing('fsm_orders', [
-            'estimate_id' => 202,
-        ]);
     }
 
     public function test_invoice_generation_carries_estimate_id_from_order(): void

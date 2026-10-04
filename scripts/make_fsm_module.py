@@ -134,64 +134,7 @@ return [
 
 # ── Module definitions ──────────────────────────────────────────────────────
 
-MODULES = {
-    'FSMAccount': {
-        'alias': 'fsmaccount',
-        'description': 'Field Service – Accounting integration: link invoices to FSM orders',
-        'requires': ['FSMCore'],
-        'resource': 'FsmAccount',
-        'route_prefix': 'fsm/account',
-        'config': "return ['name' => 'FSMAccount'];",
-    },
-    'FSMKanban': {
-        'alias': 'fsmkanban',
-        'description': 'Field Service – Kanban card info overlays for FSM orders',
-        'requires': ['FSMCore'],
-        'resource': 'FsmKanban',
-        'route_prefix': 'fsm/kanban',
-        'config': "return ['name' => 'FSMKanban', 'show_schedule_range' => true, 'show_worker' => true];",
-    },
-    'FSMProject': {
-        'alias': 'fsmproject',
-        'description': 'Field Service – link FSM orders to Projects and Tasks',
-        'requires': ['FSMCore'],
-        'resource': 'FsmProject',
-        'route_prefix': 'fsm/project',
-        'config': "return ['name' => 'FSMProject'];",
-    },
-    'FSMRepair': {
-        'alias': 'fsmrepair',
-        'description': 'Field Service – Repair orders linked to FSM work orders',
-        'requires': ['FSMCore'],
-        'resource': 'FsmRepair',
-        'route_prefix': 'fsm/repair',
-        'config': "return ['name' => 'FSMRepair'];",
-    },
-    'FSMRepairTemplate': {
-        'alias': 'fsmrepairtemplate',
-        'description': 'Field Service – Repair order templates for FSM orders',
-        'requires': ['FSMCore', 'FSMRepair'],
-        'resource': 'FsmRepairTemplate',
-        'route_prefix': 'fsm/repair-templates',
-        'config': "return ['name' => 'FSMRepairTemplate'];",
-    },
-    'FSMSize': {
-        'alias': 'fsmsize',
-        'description': 'Field Service – Size management for locations and orders',
-        'requires': ['FSMCore'],
-        'resource': 'FsmSize',
-        'route_prefix': 'fsm/sizes',
-        'config': "return ['name' => 'FSMSize'];",
-    },
-    'FSMStageAction': {
-        'alias': 'fsmstageaction',
-        'description': 'Field Service – Automated actions triggered on stage transitions',
-        'requires': ['FSMCore'],
-        'resource': 'FsmStageAction',
-        'route_prefix': 'fsm/stage-actions',
-        'config': "return ['name' => 'FSMStageAction'];",
-    },
-}
+MODULES = {}
 
 for name, cfg in MODULES.items():
     alias = cfg['alias']

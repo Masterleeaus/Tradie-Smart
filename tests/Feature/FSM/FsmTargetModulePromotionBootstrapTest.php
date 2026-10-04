@@ -10,7 +10,6 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Validation\ValidationException;
 use Tests\Feature\Titan\Support\TitanFakeUser;
 use Tests\TestCase;
 
@@ -84,11 +83,10 @@ class FsmTargetModulePromotionBootstrapTest extends TestCase
         Schema::create('fsm_sizes', function ($table) {
             $table->id();
             $table->unsignedBigInteger('company_id')->nullable();
+            $table->string('code', 8);
             $table->string('name');
-            $table->string('unit_of_measure')->nullable();
-            $table->unsignedBigInteger('type_id')->nullable();
-            $table->unsignedBigInteger('parent_id')->nullable();
-            $table->boolean('is_order_size')->default(false);
+            $table->text('description')->nullable();
+            $table->unsignedInteger('sequence')->default(0);
             $table->boolean('active')->default(true);
             $table->timestamps();
         });
@@ -226,122 +224,36 @@ class FsmTargetModulePromotionBootstrapTest extends TestCase
 
     public function test_target_routes_bootstrap_for_promoted_modules(): void
     {
-        $this->assertTrue(Route::has('fsmproject.index'));
-        $this->assertTrue(Route::has('fsmproject.store'));
-        $this->assertTrue(Route::has('fsmsize.index'));
-        $this->assertTrue(Route::has('fsmsize.store'));
-        $this->assertTrue(Route::has('api.fsmproject.orders.link'));
-        $this->assertTrue(Route::has('api.fsmproject.orders.link-task'));
-        $this->assertTrue(Route::has('api.fsmproject.orders.unlink'));
-        $this->assertTrue(Route::has('api.fsmproject.projects.summary'));
-        $this->assertTrue(Route::has('api.fsmsize.index'));
-        $this->assertTrue(Route::has('fsmproject.update'));
-        $this->assertTrue(Route::has('fsmproject.unlink'));
-        $this->assertTrue(Route::has('fsmproject.destroy'));
-        $this->assertTrue(Route::has('fsmsize.update'));
-        $this->assertTrue(Route::has('fsmsize.destroy'));
+        $this->assertTrue(Route::has('fsmworkflow.sizes.index'));
+        $this->assertTrue(Route::has('fsmworkflow.sizes.store'));
+        $this->assertTrue(Route::has('fsmworkflow.sizes.update'));
+        $this->assertTrue(Route::has('fsmworkflow.sizes.destroy'));
+        $this->assertTrue(Route::has('fsmworkflow.stage_actions.index'));
+        $this->assertTrue(Route::has('fsmworkflow.kanban_config.index'));
         $this->assertTrue(Route::has('fsmrecurring.frequencies.index'));
         $this->assertTrue(Route::has('fsmskill.skill-types.index'));
     }
 
-    public function test_fsmsize_web_render_and_save_flow(): void
+    public function test_fsmworkflow_size_web_render_and_save_flow(): void
     {
-        $controller = app(\Modules\FSMSize\Http\Controllers\FsmSizeController::class);
-        $indexResponse = $controller->index(Request::create(route('fsmsize.index'), 'GET'));
+        $controller = app(\Modules\FSMWorkflow\Http\Controllers\SizeController::class);
+        $indexResponse = $controller->index(Request::create(route('fsmworkflow.sizes.index'), 'GET'));
         $this->assertInstanceOf(View::class, $indexResponse);
 
-        $storeResponse = $controller->store(Request::create(route('fsmsize.store'), 'POST', [
+        $storeResponse = $controller->store(Request::create(route('fsmworkflow.sizes.store'), 'POST', [
+            'code' => 'SML',
             'name' => 'Small Apartment',
             'unit_of_measure' => 'sqm',
             'is_order_size' => 1,
         ]));
 
         $this->assertInstanceOf(RedirectResponse::class, $storeResponse);
-        $this->assertSame(route('fsmsize.index'), $storeResponse->getTargetUrl());
+        $this->assertSame(route('fsmworkflow.sizes.index'), $storeResponse->getTargetUrl());
 
         $this->assertDatabaseHas('fsm_sizes', [
-            'company_id' => 1,
+            'code' => 'SML',
             'name' => 'Small Apartment',
         ]);
-    }
-
-    public function test_fsmproject_web_render_and_save_flow(): void
-    {
-        $controller = app(\Modules\FSMProject\Http\Controllers\FsmProjectController::class);
-        $createResponse = $controller->create();
-        $this->assertInstanceOf(View::class, $createResponse);
-
-        $storeResponse = $controller->store(Request::create(route('fsmproject.store'), 'POST', [
-            'order_id' => 101,
-            'project_id' => 555,
-            'task_id' => 777,
-        ]));
-
-        $this->assertInstanceOf(RedirectResponse::class, $storeResponse);
-        $this->assertSame(route('fsmproject.index'), $storeResponse->getTargetUrl());
-
-        $this->assertDatabaseHas('fsm_orders', [
-            'id' => 101,
-            'company_id' => 1,
-            'project_id' => 555,
-            'task_id' => 777,
-        ]);
-    }
-
-    public function test_fsmproject_api_link_unlink_and_summary_flow(): void
-    {
-        $controller = app(\Modules\FSMProject\Http\Controllers\FsmProjectController::class);
-
-        $controller->link(Request::create(route('api.fsmproject.orders.link', 101), 'POST', [
-            'project_id' => 555,
-            'task_id' => 777,
-        ]), 101);
-
-        DB::table('fsm_orders')->where('id', 101)->update([
-            'date_start' => now()->subHour(),
-            'date_end' => now(),
-        ]);
-
-        $ordersResponse = $controller->byProject(555);
-        $ordersData = $ordersResponse->getData(true);
-        $this->assertCount(1, $ordersData['data']);
-
-        $order = \Modules\FSMCore\Models\FSMOrder::query()->findOrFail(101);
-        $project = \App\Models\Project::query()->findOrFail(555);
-        $task = \App\Models\Task::without(['company', 'project', 'users'])->findOrFail(777);
-        $this->assertSame(555, $order->project?->id);
-        $this->assertSame(777, $order->task?->id);
-        $this->assertSame(101, $project->fsmOrders()->first()?->id);
-        $this->assertSame(101, $task->fsmOrders()->first()?->id);
-
-        $summaryResponse = $controller->summary(555);
-        $summaryData = $summaryResponse->getData(true)['data'];
-        $this->assertSame(1, $summaryData['count']);
-        $this->assertArrayHasKey('total_hours', $summaryData);
-        $this->assertArrayHasKey('completion_percent', $summaryData);
-
-        $controller->unlink(Request::create(route('api.fsmproject.orders.unlink', 101), 'POST'), 101);
-        $this->assertDatabaseHas('fsm_orders', [
-            'id' => 101,
-            'project_id' => null,
-            'task_id' => null,
-        ]);
-    }
-
-    public function test_fsmproject_task_link_rejects_cross_project_task(): void
-    {
-        $controller = app(\Modules\FSMProject\Http\Controllers\FsmProjectController::class);
-
-        $controller->link(Request::create(route('api.fsmproject.orders.link', 101), 'POST', [
-            'project_id' => 555,
-            'task_id' => 777,
-        ]), 101);
-
-        $this->expectException(ValidationException::class);
-
-        $controller->linkTask(Request::create(route('api.fsmproject.orders.link-task', 101), 'POST', [
-            'task_id' => 778,
-        ]), 101);
     }
 
     public function test_fsmrecurring_frequency_web_render_and_save_flow(): void
