@@ -16,7 +16,7 @@ use Modules\BookingModule\Entities\BookingRepeat;
 use Modules\PaymentModule\Entities\PaymentRequest;
 use Modules\UserManagement\Entities\User;
 use Modules\BookingModule\Entities\Booking;
-use Modules\PaymentModule\Entities\OfflinePayment;
+use App\Models\OfflinePaymentMethod as OfflinePayment;
 use Modules\BookingModule\Http\Traits\BookingTrait;
 use Modules\BookingModule\Http\Traits\CustomerAddressTrait;
 use Modules\BookingModule\Entities\BookingStatusHistory;
