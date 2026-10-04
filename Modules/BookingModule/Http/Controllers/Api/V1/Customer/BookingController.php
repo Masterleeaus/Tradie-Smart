@@ -18,7 +18,7 @@ use Modules\UserManagement\Entities\User;
 use Modules\BookingModule\Entities\Booking;
 use Modules\PaymentModule\Entities\OfflinePayment;
 use Modules\BookingModule\Http\Traits\BookingTrait;
-use Modules\CustomerModule\Traits\CustomerAddressTrait;
+use Modules\BookingModule\Http\Traits\CustomerAddressTrait;
 use Modules\BookingModule\Entities\BookingStatusHistory;
 use Modules\BidModule\Http\Controllers\APi\V1\Customer\PostBidController;
 
