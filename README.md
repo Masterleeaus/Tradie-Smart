@@ -36,11 +36,34 @@ Tradie Smart currently includes:
 
 > **Core principle:** probabilistic intelligence should sit behind explicit business, tenant, tool, and execution boundaries rather than becoming the source of truth for operational state.
 
+
+## Measured evidence
+
+Tradie Smart currently has **partial, mixed verification rather than a clean production-readiness result**. That is important portfolio evidence in its own right.
+
+The last documented verification snapshot in this repository was recorded on **4 October 2026** at commit `46132b2592a3b34a144b5997327e8430b5571705`.
+
+| Verification area | Documented result | What it establishes |
+| --- | --- | --- |
+| Lint workflow | ✅ Passing in recorded snapshot | repository lint lane completed |
+| Security workflow | ✅ Passing in recorded snapshot | CodeQL/security workflow completed; some dependency-audit steps remain informational |
+| Composer install | ✅ Reached successfully | PHP dependency installation succeeded in CI |
+| Frontend production build | ✅ Reached successfully | production asset build completed |
+| MySQL migrations | ✅ Reached successfully | migrate and migrate:fresh completed |
+| SQLite migrations | ✅ Reached successfully | migrate and migrate:fresh completed |
+| Route/bootstrap smoke | ❌ Failing in recorded snapshot | unresolved `ProviderManagement\Entities\SubscribedService` reference |
+| PHPUnit stage | ⏸ Blocked in recorded snapshot | downstream tests did not run because bootstrap failed first |
+| Fresh install check | ❌ Failing in recorded snapshot | install reached route bootstrap before failing |
+
+**Important:** the main branch has advanced since that recorded snapshot. Treat the table as dated evidence, not a claim about the current head. Rerun the repository workflows before presenting those statuses as current.
+
+This repository therefore demonstrates something more useful than a blanket “production-ready” claim: substantial install/build/migration progress, a clearly identified bootstrap failure, and an explicit boundary on what has and has not been verified.
+
 ---
 
-# Technical Signature
+## What is new
 
-## 1. Operations-native AI tool boundary
+### 1. Operations-native AI tool boundary
 
 Tradie Smart contains a real tool layer rather than only forwarding user text to a language model.
 
@@ -114,7 +137,7 @@ That inconsistency is documented here instead of being hidden behind an "AI-read
 
 ---
 
-## 2. Proposal-first AI integration
+### 2. Proposal-first AI integration
 
 The Booking module implements a useful safety pattern: AI-originated suggestions can be persisted as **pending proposals** rather than executed immediately.
 
@@ -167,7 +190,7 @@ The pattern is implemented in the Booking integration, but it should not yet be 
 
 ---
 
-## 3. Offline-first field runtime
+### 3. Offline-first field runtime
 
 The **Titan Go** module provides the worker-facing execution surface.
 
@@ -237,7 +260,7 @@ That is a clear next hardening target.
 
 ---
 
-## 4. Deterministic dispatch before AI
+### 4. Deterministic dispatch before AI
 
 **SynapseDispatch** provides an inspectable dispatch baseline.
 
@@ -271,7 +294,7 @@ This deterministic baseline matters because it gives future ML or AI dispatch re
 
 ---
 
-# Verified Capabilities
+## Verified capabilities
 
 | Capability | Implementation evidence |
 | --- | --- |
@@ -292,7 +315,7 @@ This deterministic baseline matters because it gives future ML or AI dispatch re
 
 ---
 
-# Architecture
+## Architecture
 
 Tradie Smart uses the Laravel host as the shared application and tenancy boundary, then adds bounded domain modules around it.
 
@@ -342,7 +365,7 @@ Tradie Smart uses the Laravel host as the shared application and tenancy boundar
 
 ---
 
-# Example: field assignment path
+## Example: field assignment path
 
 A job assignment can combine multiple deterministic controls before any future AI optimisation is required.
 
@@ -378,7 +401,7 @@ This is intentionally understandable from source code. A future learned ranking 
 
 ---
 
-# AI Safety and Authority Boundaries
+## Reliability, safety and authority
 
 Tradie Smart currently contains several useful control mechanisms:
 
@@ -414,7 +437,7 @@ This should be hardened before describing the AI runtime as strongly governed.
 
 ---
 
-# Verification
+## Reproducible verification
 
 ## Current main-branch snapshot
 
@@ -455,7 +478,7 @@ This is more useful evidence than claiming the repository is production-ready wh
 
 ---
 
-# Testing
+## Testing
 
 The PHPUnit configuration covers application and module suites across:
 
@@ -491,7 +514,7 @@ Because current main fails during route bootstrap, this README does **not** publ
 
 ---
 
-# Quick Start
+## Quick start
 
 ## Requirements
 
@@ -529,7 +552,7 @@ Treat the repository as **active engineering work**, not as a clean production r
 
 ---
 
-# Repository Map
+## Repository map
 
 ~~~text
 Tradie-Smart/
