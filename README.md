@@ -1,4 +1,4 @@
-![Tradie-Smart — Laravel operations suite](docs/images/portfolio-banner.svg)
+![Tradie-Smart — Laravel operations suite with domain modules, workforce, projects, field service, and finance](docs/images/tradie-smart-banner.svg)
 
 <div align="center">
 
@@ -13,6 +13,10 @@ Tradie-Smart brings the day-to-day operating surface of a service business into 
 ## What it solves
 
 Service businesses outgrow disconnected spreadsheets and inbox workflows when work moves from enquiry to project, scheduled visit, timesheet, invoice, and payment. Tradie-Smart gives those transitions a shared application model and a Laravel-native module system that can be extended without replacing the host application.
+
+<p align="center">
+  <img src="docs/images/tradie-smart-architecture.svg" alt="Tradie-Smart architecture from the Laravel host through vendor modules and project-management workflows to installation and test evidence." width="100%" />
+</p>
 
 ## Product architecture
 
