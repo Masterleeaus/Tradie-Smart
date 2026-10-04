@@ -138,9 +138,22 @@ jobs:
       - name: Route/bootstrap smoke checks
         run: |
           set -o pipefail
-          php artisan route:list > /tmp/route-list.txt
+          if ! php artisan route:list > /tmp/route-list.txt 2>&1; then
+            echo "route:list failed; captured Artisan output:"
+            tail -80 /tmp/route-list.txt
+            if [ -f storage/logs/laravel.log ]; then
+              echo "Laravel exception log:"
+              grep -E 'ERROR:|CRITICAL:|ALERT:|EMERGENCY:' storage/logs/laravel.log | tail -40 || true
+            fi
+            exit 1
+          fi
           tail -5 /tmp/route-list.txt
-          php artisan about
+          if ! php artisan about > /tmp/artisan-about.txt 2>&1; then
+            echo "artisan about failed; captured Artisan output:"
+            tail -80 /tmp/artisan-about.txt
+            exit 1
+          fi
+          cat /tmp/artisan-about.txt
 
       - name: Run tests
         run: php artisan test
