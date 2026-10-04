@@ -1,92 +1,100 @@
-![Worksuite SaaS Vendor Source Archive — THIRD-PARTY SOURCE · ATTRIBUTION RETAINED](docs/images/portfolio-banner.svg)
+![Tradie-Smart — Laravel operations suite](docs/images/portfolio-banner.svg)
 
-# Worksuite SaaS Vendor Source Archive
+<div align="center">
 
-## Product architecture and engineering highlights
+# Tradie-Smart
 
-A substantial Laravel project-management application with an extensible vendor module/plugin structure and a documented installation path.
+**A modular Laravel operations suite for coordinating customers, projects, field service, workforce, and finance workflows.**
 
-- **Architecture:** The codebase is organized around the upstream Worksuite application and its Laravel ecosystem; its own README links the installation guide and included test suite.
-- **Distinctive engineering:** The portfolio value is a real-world SaaS codebase for studying application structure and extension boundaries. Preserve vendor attribution and distinguish upstream work from any local changes.
+</div>
 
-> **Portfolio status: archive or deletion review.** This repository is an imported third-party application and is not a suitable flagship portfolio project. It is retained temporarily for provenance and review; see [portfolio audit](https://github.com/Masterleeaus/Titan-Zero-Field-Service-Workforce/blob/main/docs/portfolio/REPOSITORY-PORTFOLIO-AUDIT.md). Do not treat it as original work.
+Tradie-Smart brings the day-to-day operating surface of a service business into one Laravel application: customer and lead records, projects and tasks, estimates and invoices, employee operations, attendance, contracts, support, reporting, and a broad field-service module family. Its strongest engineering story is the extension boundary—domain modules can own their routes, providers, migrations, views, and tests while the host application supplies shared authentication, tenancy, and platform services.
 
-## Project summary
+## What it solves
 
-A Laravel-based project management application with a broad feature set. The repository includes installation documentation and an existing test suite. This README summarizes the repository as it stands; functionality and security have not been independently reverified.
+Service businesses outgrow disconnected spreadsheets and inbox workflows when work moves from enquiry to project, scheduled visit, timesheet, invoice, and payment. Tradie-Smart gives those transitions a shared application model and a Laravel-native module system that can be extended without replacing the host application.
 
-## Setup
+## Product architecture
 
-See the [installation guide](docs/install.md) and use the tracked `.env.example` as a starting point. Never commit real credentials or local environment files.
+| Capability | Source evidence | Engineering value |
+| --- | --- | --- |
+| Customer and commercial workflow | [`routes/web.php`](routes/web.php) wires clients, client contacts and documents, leads, proposals, estimates, projects, contracts, products, invoices, credit notes, payments, and finance reports behind the authenticated account surface. | Keeps customer, work, and money workflows connected instead of duplicating records between tools. |
+| Workforce operations | The same route surface includes employees, departments, designations, attendance, leave, shifts, weekly timesheets, approvals, and employee documents. | Gives managers a shared place to plan work and account for the people delivering it. |
+| Field-service extensions | [`Modules/`](Modules/) contains current FSM modules including `FSMCore`, `FSMProject`, `FSMRoute`, `FSMRouteAvailability`, `FSMSales`, `FSMVehicle`, `FSMStock`, `FSMRepair`, and `FSMWorkflow`, alongside `TitanCore` and `ZeroPay`. | Makes specialised operational capabilities installable and reviewable as bounded Laravel modules. |
+| Authenticated API | [`routes/api.php`](routes/api.php) exposes authenticated endpoints for leads, estimates, tasks, invoices, payments, and contracts. | Supports integrations without bypassing the application's authentication boundary. |
+| Frontend build | The root [`package.json`](package.json) uses Laravel Mix/Webpack with Bootstrap, Quill, charts, Echo, Pusher, and the application asset libraries. | Keeps the server-rendered Laravel application paired with a repeatable asset pipeline. |
+| Verification surface | [`phpunit.xml`](phpunit.xml) includes application and module Unit/Feature suites, including `TitanCore`, `Accountings`, and `Purchase` module tests. | Makes module behavior part of the same test contract as the host application. |
 
-## Provenance
+## A typical workflow
 
-This repository contains upstream Worksuite SaaS source and retains its original vendor attribution and licensing files. Review those terms before distributing or presenting modified versions.
+```text
+Lead or customer
+      │
+      ▼
+Estimate / proposal
+      │
+      ▼
+Project + tasks + members
+      │
+      ├─ schedule, attendance, timelog, field-service module
+      ▼
+Invoice / payment / reporting
+```
 
-## Review notes
+The application is intentionally broad: shared account routes handle common business records, while `Modules/` supplies field-service and vertical extensions. That structure is useful for teams that need a coherent core but cannot force every operational domain into one monolithic controller layer.
 
-- Imported source; distinguish any original contributions from upstream code.
-- Run the documented installation and tests in a clean environment before making capability claims.
-- Check licensing and vendor terms before redistribution.
+## Quickstart
 
+### Prerequisites
 
-## Installation
+- PHP 8.3 or newer
+- Composer
+- Node.js and npm
+- A database configured for the Laravel environment
 
-See the full installation and smoke-check guide at:
-- [docs/install.md](docs/install.md)
+### Install
 
-### Plugins used in the app
+```bash
+composer install --no-interaction --prefer-dist
+cp .env.example .env
+php artisan key:generate
+php artisan migrate
+npm ci
+npm run development
+```
 
-<ol>
-    <li>
-        <strong>Bootstrap 4 </strong> - <a href="https://getbootstrap.com/">https://getbootstrap.com/</a>
-    </li>
-    <li>
-        <strong>Moment.js </strong> - <a href="https://momentjs.com/">https://momentjs.com/</a>
-    </li>
-    <li>
-        <strong>Bootstrap Select</strong> - <a href="https://developer.snapappointments.com/bootstrap-select/">https://developer.snapappointments.com/bootstrap-select/</a>
-    </li>
-    <li>
-        <strong>Datepicker </strong> - <a href="https://github.com/qodesmith/datepicker">https://github.com/qodesmith/datepicker</a>
-    </li>
-    <li>
-        <strong>Fontawesome </strong> - <a href="https://fontawesome.com/">https://fontawesome.com/</a>
-    </li>
-    <li>
-        <strong>Bootstrap Icons (used in menu) </strong> - <a href="https://icons.getbootstrap.com/">https://icons.getbootstrap.com/</a>
-    </li>
-    <li>
-        <strong>Dropify (used for file uploads) </strong> - <a href="https://github.com/JeremyFagis/dropify">https://github.com/JeremyFagis/dropify</a>
-    </li>
-    <li>
-        <strong>sweetalert2 (used for alerts and notifications)</strong> - <a href="https://sweetalert2.github.io/">https://sweetalert2.github.io/</a>
-    </li>
-    <li>
-        <strong>Quilljs (used for rich text editor)</strong> - <a href="https://quilljs.com/">https://quilljs.com/</a>
-    </li>
-    <li>
-        <strong>Frappe Charts</strong> - <a href="https://frappe.io/charts">https://frappe.io/charts</a>
-    </li>
-    <li>
-        <strong>Bootstrap MultiDatesPicker</strong> - <a href="https://github.com/uxsolutions/bootstrap-datepicker">https://github.com/uxsolutions/bootstrap-datepicker</a>
-    </li>
-    <li>
-        <strong>Bootstrap Colorpicker</strong> - <a href="https://github.com/itsjavi/bootstrap-colorpicker">https://github.com/itsjavi/bootstrap-colorpicker</a>
-    </li>
-    <li>
-        <strong>jQuery UI (used for sortable items)</strong> - <a href="https://jqueryui.com/">https://jqueryui.com/</a>
-    </li>
-    <li>
-        <strong>Highlight JS (used for highlight html content)</strong> - <a href="https://github.com/highlightjs/highlight.js">highlight.min.js</a>
-    </li>
-    <li>
-        <strong>Chart.js</strong> - <a href="https://www.chartjs.org/">https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js</a>
-    </li>
-    <li>
-        <strong>Image Picker</strong> - <a href="https://rvera.github.io/image-picker/">https://rvera.github.io/image-picker/</a>
-    </li>
-    <li>
-        <strong>Cropper.js</strong> - <a href="https://github.com/fengyuanchen/cropperjs">https://github.com/fengyuanchen/cropperjs</a>
-    </li>
-</ol>
+The FSM family is heterogeneous: some packages are full feature areas, while others are thin schemas, providers, or wiring layers. Treat each module as an extension boundary rather than assuming every package is an independently complete application.
+
+For a production asset build, use `npm run production`. The repository also contains the more detailed [`docs/install.md`](docs/install.md) guide.
+
+### Test
+
+```bash
+vendor/bin/phpunit
+vendor/bin/pint --test
+```
+
+Run environment-sensitive integrations only after configuring local credentials and services. Never commit `.env` or customer data.
+
+## Repository map
+
+| Path | Role |
+| --- | --- |
+| [`app/`](app/) | Core Laravel application, controllers, models, policies, services, and shared infrastructure. |
+| [`Modules/`](Modules/) | Domain modules with providers, routes, migrations, resources, and module-specific tests. |
+| [`routes/`](routes/) | Web, API, panel, webhook, and authentication route composition. |
+| [`database/`](database/) | Migrations, seeders, and factories for the application and modules. |
+| [`tests/`](tests/) | Application-level verification suites. |
+| [`docs/install.md`](docs/install.md) | Repository-specific installation and smoke-check guidance. |
+
+## Provenance and attribution
+
+Tradie-Smart contains Worksuite SaaS vendor source and other upstream application material alongside repository-local module and integration work. Preserve the upstream vendor attribution, license, and notice files. This README describes the engineering surface without claiming original authorship for upstream portions; distinguish local changes from inherited code when presenting or redistributing the repository.
+
+## Evidence and scope
+
+This README is aligned to the canonical `Tradie-Smart` repository at main commit `9acebc1` and the source paths reviewed on 2026-10-04. The feature map above is based on checked-in routes, modules, package manifests, and PHPUnit configuration; it is not a claim that every optional module or external integration has been freshly deployed.
+
+## License
+
+Review the repository's retained license, vendor notices, and third-party terms before redistribution or commercial reuse.
